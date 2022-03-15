@@ -7,6 +7,8 @@
     <Description>SolrNet is a .NET Open Source client for Apache Solr. This version of SolrNet is compatible with Solr 1.x to Solr 8.x. This is the SolrNet.Core package, and should be used in combination with any of our easy to use Dependency Injection SolrNet integration libraries.</Description>
     <PackageId>SolrNet.Core</PackageId>
     <IsPackable>true</IsPackable>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>C:\tfs\Syracuse\dev\Archimed.Syracuse.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard2.0'">
     <DocumentationFile>bin\Release\netstandard2.0\SolrNet.xml</DocumentationFile>

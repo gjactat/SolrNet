@@ -54,6 +54,11 @@ namespace SolrNet.Impl {
         /// <summary>
         /// Facet ranges results
         /// </summary>
+        public IDictionary<string, HeatmapFacetingResult> HeatmapFacets { get; set; }
+
+        /// <summary>
+        /// Facet ranges results
+        /// </summary>
         public IDictionary<string, ICollection<KeyValuePair<string, int>>> FacetIntervals { get; set; }
 
         /// <summary>

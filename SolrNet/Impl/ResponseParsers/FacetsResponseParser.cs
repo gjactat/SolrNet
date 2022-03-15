@@ -38,6 +38,7 @@ namespace SolrNet.Impl.ResponseParsers {
 				results.FacetPivots = ParseFacetPivots(mainFacetNode);
                 results.FacetRanges = ParseFacetRanges(mainFacetNode);
                 results.FacetIntervals = ParseFacetIntervals(mainFacetNode);
+                results.HeatmapFacets = HeatmapFacetingResult.ParseFacetHeatmaps(mainFacetNode);
             }
         }
 

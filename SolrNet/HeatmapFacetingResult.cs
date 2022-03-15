@@ -14,59 +14,45 @@ namespace SolrNet
     public class HeatmapFacetingResult
     {
         #region Public Properties
-        /// <summary>
-        /// Name
-        /// </summary>
-
-        public string FacetName { get; internal set; }
-
 
         /// <summary>
         /// Columns
         /// </summary>
-
         public int Columns { get; internal set; }
 
         /// <summary>
         /// GridLevel
         /// </summary>
-
         public int GridLevel { get; internal set; }
 
         /// <summary>
         /// MaxX
         /// </summary>
-
         public double MaxX { get; internal set; }
 
         /// <summary>
         /// MaxY
         /// </summary>
-
         public double MaxY { get; internal set; }
 
         /// <summary>
         /// MinX
         /// </summary>
-
         public double MinX { get; internal set; }
 
         /// <summary>
         /// MinY
         /// </summary>
-
         public double MinY { get; internal set; }
 
         /// <summary>
         /// Rows
         /// </summary>
-
         public int Rows { get; internal set; }
 
         /// <summary>
         /// Répartition des counts
         /// </summary>
-
         public int?[][] CountsArrays { get; internal set; }
 
         #endregion Public Properties
@@ -102,8 +88,6 @@ namespace SolrNet
         {
             var heatmapFacetNode = node.Elements("lst")
     .Where(X.AttrEq("name", "facet_heatmaps"));
-
-            FacetName = node.Attribute("name").Value;
 
             GridLevel = ReadIntAttribute(node, "gridLevel");
             Columns = ReadIntAttribute(node, "columns");

@@ -40,6 +40,20 @@ namespace SolrNet.Impl.ResponseParsers {
                 results.FacetIntervals = ParseFacetIntervals(mainFacetNode);
                 results.HeatmapFacets = HeatmapFacetingResult.ParseFacetHeatmaps(mainFacetNode);
             }
+
+            var jsonFacetNode = xml.Element("response")
+                .Elements("lst")
+                .FirstOrDefault(X.AttrEq("name", "facets"));
+            if(jsonFacetNode != null)
+            {
+                var jsonDico = ParseJsonFacetFields(jsonFacetNode);
+                if(jsonDico.Count > 0)
+                {
+                    results.FacetFields = results.FacetFields.Concat(jsonDico)
+                    .ToLookup(x => x.Key, x => x.Value)
+                    .ToDictionary(x => x.Key, g => g.First());
+                }
+            }
         }
 
         /// <summary>
@@ -60,25 +74,50 @@ namespace SolrNet.Impl.ResponseParsers {
             return d;
         }
 
-    
+        /// <summary>
+        /// Parses facet fields results
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public IDictionary<string, ICollection<KeyValuePair<string, int>>> ParseFacetFields(XElement node)
+        {
+            var d = new Dictionary<string, ICollection<KeyValuePair<string, int>>>();
+            var facetFields = node.Elements("lst")
+                .Where(X.AttrEq("name", "facet_fields"))
+                .SelectMany(x => x.Elements());
+            foreach (var fieldNode in facetFields)
+            {
+                var field = fieldNode.Attribute("name").Value;
+                var c = new List<KeyValuePair<string, int>>();
+                foreach (var facetNode in fieldNode.Elements())
+                {
+                    var nameAttr = facetNode.Attribute("name");
+                    var key = nameAttr == null ? "" : nameAttr.Value;
+                    var value = Convert.ToInt32(facetNode.Value);
+                    c.Add(new KeyValuePair<string, int>(key, value));
+                }
+                d[field] = c;
+            }
+            return d;
+        }
 
         /// <summary>
         /// Parses facet fields results
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
-        public IDictionary<string, ICollection<KeyValuePair<string, int>>> ParseFacetFields(XElement node) {
+        public IDictionary<string, ICollection<KeyValuePair<string, int>>> ParseJsonFacetFields(XElement node) {
             var d = new Dictionary<string, ICollection<KeyValuePair<string, int>>>();
-            var facetFields = node.Elements("lst")
-                .Where(X.AttrEq("name", "facet_fields"))
-                .SelectMany(x => x.Elements());
+            var facetFields = node.Elements("lst");
             foreach (var fieldNode in facetFields) {
                 var field = fieldNode.Attribute("name").Value;
                 var c = new List<KeyValuePair<string, int>>();
-                foreach (var facetNode in fieldNode.Elements()) {
-                    var nameAttr = facetNode.Attribute("name");
-                    var key = nameAttr == null ? "" : nameAttr.Value;
-                    var value = Convert.ToInt32(facetNode.Value);
+                foreach (var facetNode in fieldNode?.Element("arr")?.Elements("lst")) {
+                    var name = facetNode.Elements().FirstOrDefault(X.AttrEq("name", "val"))?.Value;
+                    var key = name ?? string.Empty;
+
+                    string val = facetNode.Elements().FirstOrDefault(X.AttrEq("name", "count"))?.Value;
+                    var value = Convert.ToInt32(val);
                     c.Add(new KeyValuePair<string, int>(key, value));
                 }
                 d[field] = c;

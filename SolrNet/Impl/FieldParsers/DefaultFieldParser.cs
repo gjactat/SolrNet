@@ -17,17 +17,20 @@
 using System;
 using System.Xml.Linq;
 
-namespace SolrNet.Impl.FieldParsers {
+namespace SolrNet.Impl.FieldParsers
+{
     /// <summary>
     /// Default field parser
     /// </summary>
-    public class DefaultFieldParser : ISolrFieldParser {
+    public class DefaultFieldParser : ISolrFieldParser
+    {
         private readonly AggregateFieldParser parser;
 
         /// <summary>
         /// Default field parser
         /// </summary>
-        public DefaultFieldParser() {
+        public DefaultFieldParser()
+        {
             parser = new AggregateFieldParser(new ISolrFieldParser[] {
                 new NullableFieldParser(new IntFieldParser()),
                 new NullableFieldParser(new FloatFieldParser()),
@@ -40,24 +43,28 @@ namespace SolrNet.Impl.FieldParsers {
                 new NullableFieldParser(new GuidFieldParser()),
                 new CollectionFieldParser(this),
                 new MoneyFieldParser(),
-                new LocationFieldParser(), 
+                new LocationFieldParser(),
                 new TypeConvertingFieldParser(),
+                new SubQueryFieldParser(this),
                 new InferringFieldParser(this),
             });
         }
 
         /// <inheritdoc />
-        public bool CanHandleSolrType(string solrType) {
+        public bool CanHandleSolrType(string solrType)
+        {
             return parser.CanHandleSolrType(solrType);
         }
 
         /// <inheritdoc />
-        public bool CanHandleType(Type t) {
+        public bool CanHandleType(Type t)
+        {
             return parser.CanHandleType(t);
         }
 
         /// <inheritdoc />
-        public object Parse(XElement field, Type t) {
+        public object Parse(XElement field, Type t)
+        {
             return parser.Parse(field, t);
         }
     }

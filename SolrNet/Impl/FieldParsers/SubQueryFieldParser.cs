@@ -18,55 +18,48 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using SolrNet.Utils;
 
 namespace SolrNet.Impl.FieldParsers
 {
     /// <summary>
-    /// Parser that infers .net type based on solr type
+    /// Parser de subqueries
+    /// Voir https://solr.apache.org/guide/7_6/transforming-result-documents.html#subquery
     /// </summary>
-    public class InferringFieldParser : ISolrFieldParser
+    public class SubQueryFieldParser : ISolrFieldParser
     {
-        private readonly ISolrFieldParser parser;
+        private readonly ISolrFieldParser valueParser;
+        private readonly SolrDictionaryDocumentResponseParser docParser;
 
-        public InferringFieldParser(ISolrFieldParser parser)
+        /// <summary>
+        /// Parses 1-dimensional fields
+        /// </summary>
+        public SubQueryFieldParser(ISolrFieldParser valueParser)
         {
-            this.parser = parser;
+            this.valueParser = valueParser;
+            docParser = new SolrDictionaryDocumentResponseParser(valueParser);
         }
 
         /// <inheritdoc />
         public bool CanHandleSolrType(string solrType)
         {
-            return true;
+            return solrType == "result";
         }
 
         /// <inheritdoc />
         public bool CanHandleType(Type t)
         {
-            return true;
-        }
-
-        private static readonly IDictionary<string, Type> solrTypes;
-
-        static InferringFieldParser()
-        {
-            solrTypes = new Dictionary<string, Type> {
-                {"bool", typeof (bool)},
-                {"str", typeof (string)},
-                {"int", typeof (int)},
-                {"float", typeof (float)},
-                {"double", typeof(double)},
-                {"long", typeof (long)},
-                {"arr", typeof (ICollection)},
-                {"date", typeof (DateTime)},
-                {"result", typeof (IList<Dictionary<string, object>>)},
-            };
+            return t != typeof(string) &&
+                   typeof(IEnumerable).IsAssignableFrom(t) &&
+                   !typeof(IDictionary).IsAssignableFrom(t) &&
+                   !TypeHelper.IsGenericAssignableFrom(typeof(IDictionary<,>), t);
         }
 
         /// <inheritdoc />
-        public object Parse(XElement field, Type t)
+        public object Parse(XElement results, Type t)
         {
-            var type = solrTypes[field.Name.LocalName];
-            return parser.Parse(field, type);
+            // On renvoie la grappe xml du résultat de sous-requête
+            return results;
         }
     }
 }

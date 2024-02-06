@@ -37,6 +37,4 @@ packages/*
 solr_output.txt
 solr_output_auth.txt
 */TestResults/*
-.devenv
-
 *.lock.json

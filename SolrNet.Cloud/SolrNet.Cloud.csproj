@@ -8,6 +8,8 @@
 This is the SolrNet.Cloud.Core package, and should be used in combination with any of our easy to use Dependency Injection SolrNet.Cloud integration libraries.</Description>
     <PackageId>SolrNet.Cloud.Core</PackageId>
     <IsPackable>true</IsPackable>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>C:\tfs\Syracuse\dev\Archimed.Syracuse.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard2.0'">
     <DocumentationFile>bin\Release\netstandard2.0\SolrNet.Cloud.xml</DocumentationFile>
